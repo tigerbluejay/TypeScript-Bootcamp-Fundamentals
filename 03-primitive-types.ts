@@ -122,3 +122,35 @@ console.log("type of course is " + typeof course );
 //     subtitle: "Learn the language fundamentals",
 //     lessonCount: 10
 // }
+
+/* NESTED OBJECTS */
+// In ts we could write
+let course2 = {
+    title: "Typescript Bootcamp",
+    subtitle: "Learn the language fundamentals",
+    lessonCount: 10,
+    author: {
+        firstName: "Jose",
+        lastName: "Iriarte"
+    }
+};
+
+// We could define inline the types of objects
+// if we want - but its not necessary.
+// let course:object {
+//     title:string,
+//     subtitle:string,
+//     lessonCount:number,
+//     author: {
+//            firstName:string,
+//            lastName:string
+//     }
+// } = {
+//     title: "Typescript Bootcamp",
+//     subtitle: "Learn the language fundamentals",
+//     lessonCount: 10,
+//     author: {
+//          firstName: "Jose"",
+//          lastName: "Iriarte"
+//     }
+// };
