@@ -1,0 +1,15 @@
+// thus if we were to use the exports in this file we would
+// need to to import them first
+// normally we would import one by one:
+
+// import { Course } from "./course-model";
+// import { loadAllCourses } from "./feature-1";
+// import { SaveCourse } from "./feature-2";
+
+// but with our import barrel, we can now streamline the import to one file
+// and since it is saved in a file named index.ts in this directory, we only
+// need to specify the . in the from clause.
+import { IndividualCouse, loadfunctionality, savefunctionality } from ".";
+
+// note that if we were to import this to a different folder the from clause would be 
+// from "./14-module-exports";
