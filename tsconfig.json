@@ -1,0 +1,273 @@
+
+// /***************************************************************/
+// /* 11 MISC PROPERTIES                                          */
+// /***************************************************************/
+/* These we've covered in the Typescript Core files but we demonstrate
+here that we can add them to the tsconfig.json file as well and not
+just as flags in the terminal */
+
+{ 
+    "compilerOptions":{
+        "target": "ES5",
+        "rootDir": "src",
+        "outDir": "dist",
+        "module": "CommonJS",
+        "baseUrl": "src",
+        "skipLibCheck": true,
+        "sourceMap": true, // our compilation will generate source maps for all files
+        "noEmitOnError": true, // prevent output files if there is a compilation error in the ts file
+        "strictNullChecks": true, // prevent variables of a given type to be assigned a null value
+        "noEmit": true, // no output will be generated (no js file), this is useful to just check type safety in the ts file
+        "removeComments": true, // to remove comments from the js compiled files  
+    },
+    "files": [ "src/01-why-typescript.ts"]
+}
+
+
+// /***************************************************************/
+// /* 10 ALLOW JS FILES AS VALID IMPORT FILES                     */
+// /***************************************************************/
+/* To do that we set the "allowJS" property to true
+We can make sure we check the javascript we are adding is compatible with typescript
+In other words, that the js doesn't violate ts rules, for example assigning a string to a number
+which is not a problem in js but it is in ts.
+
+// { 
+//     "compilerOptions":{
+//         "target": "ES5",
+//         "rootDir": "src",
+//         "outDir": "dist",
+//         "module": "CommonJS",
+//         "baseUrl": "src",
+//         "skipLibCheck": true,
+//         "allowJs": true, // with this we can add js files as valid import files
+//         "checkJs": true // with this we make sure the js doesn't violate ts rules
+//     },
+// }
+
+
+// /***************************************************************/
+// /* 09 HOW TO INCLUDE EXTERNAL TYPES IN THE COMPILATION PROCESS */
+// /***************************************************************/
+/* For libraries the compiler doesn't know about: third party packages
+may provide additional types. For example the express types of the external
+express library.
+We need to include both the libraries and the related types */
+// So we first go to the same directory where we have our "packages.json" file, and do:
+// npm install express
+// We also need to install the type defintions for express
+// npm install -D @types/express
+// the -D flag is to add as a development dependency
+// So we now have the express external library type definitions and autocompletion.
+// se file 31-express.ts
+
+// the "typesRoots": [] property to point to other directories other than the default types directory
+// the "types": [] property, to include only certain types and not everything like its done by default
+// the "skipLibCheck": true, property, the ts compiler will not check the validity of the types
+
+
+// { 
+//     "compilerOptions":{
+//         "target": "ES5",
+//         "rootDir": "src",
+//         "outDir": "dist",
+//         "module": "CommonJS",
+//         "baseUrl": "src",
+//         "skipLibCheck": true,
+//         "types": [ "express" ]
+//     },
+// }
+
+// /************************************************/
+// /* 08 BASE URL PROPERTY                         */
+// /************************************************/
+/* The base url property allows us to define a path
+that will work on import urls in compiled files when
+we don't set a relative path on those imports */
+
+// { 
+//     "compilerOptions":{
+//         "target": "ES5",
+//         "rootDir": "src",
+//         "outDir": "dist",
+//         "module": "CommonJS",
+//         "baseUrl": "src"
+//     },
+//     "files":[
+//         "src/12-modules-imports.ts" // we could redefine inside this file
+//         // the import { PAGE_SIZE, COURSE, Course  } from "./12-modules-exports";
+//         // to import { PAGE_SIZE, COURSE, Course  } from "12-modules-exports"
+//         // and the compiler would understand as long as we set the baseUrl property
+//         // correctly to "src"
+//     ]
+// }
+
+
+// /************************************************/
+// /* 07 LIB AND NOLIB PROPERTIES                  */
+// /************************************************/
+/* Here we configure how to include or exclude some commonly used libraries in our program */
+/* The NoLib property set to false will include all the default libraries
+The NoLib property set to true will exclude all the default libraries included
+If we want some more customization over which libraries to include in our project
+we can use the Lib property and set it to the the libraries we want to use. */
+
+// { 
+//     "compilerOptions":{
+//         "target": "ES5",
+//         "rootDir": "src",
+//         "outDir": "dist",
+//         "module": "CommonJS",
+//         // "noLib": true // noLib can't be set with the lib property, it's one or the other
+//         // so here it is commented.
+//         "lib": [ // the lib properties is to include the libraries we want to include in our project
+//             "ES5", // the Ecmascript 5 library includes js primitive types (boolean, string, array, etc)
+//             "DOM" // the DOM library includes the document object model commonly used features
+//         ]
+//     },
+//     "files":[
+//         "src/30-tsconfig-lib.ts"
+//     ]
+// }
+
+// all of these are included by default, so NoLib is set to false by default
+// stick to the default libraries as much as possible (the ones that are included
+// without the need to specify noLib: false and lib libraries)
+
+
+
+// /************************************************/
+// /* 06 MODULE PROPERTY                           */
+// /************************************************/
+/* The module property serves to specify which js format
+the module syntax (imports and exports) will take upon compilation */
+// The most common (common to browsers and node js) is "CommonJS"
+
+// { 
+//     "compilerOptions":{
+//         "target": "ES5",
+//         "rootDir": "src",
+//         "outDir": "dist",
+//         "module": "CommonJS"
+//     }
+// }
+
+// after compilation, examine the 12-modules-import.js
+// file to see the output of this syntax.
+
+
+// /************************************************/
+// /* 05 ROOTDIR AND OUTDIR PROPERTIES             */
+// /************************************************/
+/* As an alternative to include, exclude and the files property
+we can define a rootDir porperty which will point to the source
+of the ts files we want to compile. We can also specify a outDir
+property which will be the location of the compiled js files */
+
+// { 
+//     "compilerOptions":{
+//         "target": "ES5",
+//         "rootDir": "src",
+//         "outDir": "dist"
+//     }
+// }
+
+
+// /************************************************/
+// /* 04 INCLUDE AND EXCLUDE PROPERTIES            */
+// /************************************************/
+/* We can include directories and their contents, or part
+of their contents in the include property, so that the compiler
+compiles these. Also we can define an exclude property which
+excludes from compilations files that might have been included
+in the include section via pattern matching.
+For example:
+*/
+
+// {
+//     "compilerOptions": {
+//         "target": "ES5" 
+//     },
+//     "include": [
+//         "src/**/*" // this would compile the src folder, and all of its subdirectories (**), and inside them everything (*)
+//     ],
+//     "exclude": [
+//         "src/**/02*" // this would exclude from compilation the files starting with 02 and followed by any characters in the name
+//                      // found in the src directory, inside any of its subdirectories
+//     ]
+// }
+
+// so overall everything in the src directory, inside its subdirectories, except file starting with 02 would be compiled.
+
+
+
+// /************************************************/
+// /* 03 THE FILES PROPERTY IN TSCONFIG.JSON       */
+// /************************************************/
+/* Under the files property we can specify which files
+we want the tsc command to compile by default.
+If the file we include under the files property has imports
+then all those imported files will be compiled as well.
+This is useful for when we compile an entry point file into
+an angular application which has a dependency tree of imports.
+Just compiling that entry point file, will compile the whole tree.
+*/
+
+// {
+//     "compilerOptions": {
+//         "target": "ES5" 
+//     },
+//     "files": [
+//         "12-modules-imports.ts"
+//     ]
+// }
+
+// So we clear the js files from the terminal
+// rm *.js
+// tsc // we compile
+// ls *.js // we list all the js files that have been compiled
+
+
+// /************************************************/
+// /* 02 USING A CUSTOM NAME FOR THE TSCONFIG FILE */
+// /************************************************/
+/* We can rename our tsconfig.json file for example custom.tsconfig.json.
+Then when we compile we would call this new file
+and the compilation would run. Additionally, we can pass
+configuration options on the terminal, and those would override
+those of the configuration file */
+
+// So we clear the js files on the terminal
+// rm *.js
+// Then we call the newly named configuration file
+// tsc --project custom.tsconfig.json --target esnext
+// This way we can override only the properties we want to change
+// from a presumably large file full of existing configurations.
+
+// {
+//     "compilerOptions": {
+//         "target": "ES5" 
+//     }
+// }
+
+
+// /********************************************/
+// /* 01 TSCONFIG.JSON AND THE TARGET PROPERTY */
+// /********************************************/
+
+// /* The tsconfig.json file which is saved in the working directory
+// serves to store compilation configuration options.
+// The file itself is a json object with the configuration specifications
+// Once defined and saved, we can do
+// tsc
+// (in the terminal) and all the files in that directory will compile */
+
+
+// {
+//     "compilerOptions": {
+//         "target": "ES5" // this is the target version of js we want to output
+//                         // ES5 is standard accepted in most all browsers
+//                         // the more modern the target the more modern the js code
+//                         // that will output
+//     }
+// }
