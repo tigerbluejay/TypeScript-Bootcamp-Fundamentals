@@ -35,11 +35,11 @@ class Course7 {
 
 }
 
-const course7a = new Course6(Course7.TYPESCRIPT_TITLE);
-console.log(course6a.title);
+const course7a = new Course7(Course7.TYPESCRIPT_TITLE);
+console.log(course7a.title);
 
 // Course7.TYPESCRIPT_TITLE = ""; // we can't modify a constant
 console.log(Course7.TYPESCRIPT_TITLE); // but we can print it outside the class
 
-const course7b = new Course6("Angular Bootcamp");
-console.log(course6b.title);
+const course7b = new Course7("Angular Bootcamp");
+console.log(course7b.title);
