@@ -1,9 +1,9 @@
 export enum LoggingLevel {
-    ERROR = "ERROR",
-    INFO = "INFO",
-    WARN = "WARN",
-    DEBUG = "DEBUG",
-    TRACE = "TRACE"
+    ERROR,
+    INFO,
+    WARN,
+    DEBUG,
+    TRACE
 } // these are listed in order
 
 const appMaxLoggingLevel = LoggingLevel.DEBUG; // this is the logging level set in our application
@@ -13,11 +13,28 @@ export function Log(level: LoggingLevel): MethodDecorator {
 
     console.log(`Applying @Log Decorator`);
 
+    // this is the decorator factory, it enhances or replaces the function being decorated
     return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
 
-                console.log(`target:`, target);
-                console.log(`propertyKey`, propertyKey);
-                console.log(`descriptor`, descriptor);
+        const originalFunction = descriptor.value; // reference to function "saveData" that we are trying to enhance
+
+        descriptor.value = function(...args: any[]) { // this is the function with enhanced functionality
+                                                      // it receives similar parameters to the original function "saveData"
+                                                      // we need to use the function keyword
+
+            if (level <= appMaxLoggingLevel) { // decides when to log
+                console.log(`>> log: ${propertyKey}, ${JSON.stringify(args)}`); //logging 
+            }
+
+            originalFunction.apply(this, args); // apply calls the original function
+                                                // this context refers to the current instance of the function saveData
+                                                // this so because we are using the function keyword and not anonymous method syntax
+
+        }
+
+            // console.log(`target:`, target);
+            // console.log(`propertyKey`, propertyKey);
+            // console.log(`descriptor`, descriptor);
 
     }
 }
@@ -39,3 +56,30 @@ for this function. These are necessary to enhane the method/property being decor
     The descriptor contains the value of the method/property of the propertyKey and a number of flags
     that we can apply to the property.
 */
+
+export function Perf(): MethodDecorator {
+
+    console.log(`Applying @Perf Decorator`);
+
+    return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+
+        const originalFunction:Function = descriptor.value; // we grab the original function
+
+        descriptor.value = function(...args:any[]) { // this is the enhanced function
+
+            console.log(`started at ${new Date().getTime()}`);
+
+            originalFunction.apply(this, args);
+
+            console.log(`ended at ${new Date().getTime()}`);
+        }
+
+    }
+
+}
+
+module.exports = {
+    Log,
+    LoggingLevel, // Assuming LoggingLevel is defined elsewhere
+    Perf
+  };
