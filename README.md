@@ -325,3 +325,218 @@ type User = { name: string };
 
 type AdminUser = Admin & User;
 ```
+
+## ⚙️ TypeScript Configuration (tsconfig.json)
+TypeScript supports project-wide configuration via a tsconfig.json file, which stores compilation options and project metadata. This section details commonly used compiler options and patterns for organizing and compiling projects.
+
+### Key Configuration Properties
+- target: Specifies the ECMAScript version (ES5, ES2015, etc.) of the output JavaScript.
+- rootDir / outDir: Defines source and output directories. Useful to separate .ts and .js files.
+- module: Declares the module system for imports/exports, typically "CommonJS" for Node.js environments.
+- sourceMap: Enables source map generation for browser debugging.
+- noEmitOnError: Prevents .js generation if there are compilation errors.
+- strictNullChecks: Forces explicit null/undefined checks.
+- removeComments: Strips comments from generated files.
+- noEmit: Suppresses output; useful for type checking only.
+- allowJs / checkJs: Enables importing JavaScript files and enforcing type checking on them.
+- types / typeRoots: Includes or excludes specific type definitions, like @types/express.
+- lib / noLib: Controls the standard libraries included in the compilation (e.g., "DOM", "ES2015").
+- baseUrl: Defines the base path for non-relative module imports.
+
+### File Inclusion Strategies
+- files: Manually list specific files to include in compilation.
+- include / exclude: Use glob patterns to control which files/directories are compiled.
+You can also use custom filenames for your config file (custom.tsconfig.json) and compile using tsc --project.
+
+## 🧱 Object-Oriented Programming in TypeScript
+TypeScript brings full OOP capabilities to JavaScript, including classes, access modifiers, inheritance, interfaces, and abstract classes.
+
+### Classes and Constructors
+You define classes using the class keyword. Constructors initialize properties. If constructor arguments match property names and types, you can declare and initialize them in one step using public, private, or readonly.
+
+```ts
+class Course {
+  constructor(
+    public readonly title: string,
+    private subtitle: string,
+    private creationDt: Date
+  ) {}
+}
+```
+
+### Access Modifiers
+- public: Default. Accessible everywhere.
+- private: Accessible only within the class.
+- protected: Accessible in the class and its subclasses.
+- readonly: Cannot be reassigned after initialization.
+
+### Getters and Setters
+Use get/set to encapsulate logic for property access:
+
+```ts
+get title() {
+  return this._title;
+}
+set title(value: string) {
+  if (!value) throw "Title cannot be empty";
+  this._title = value;
+}
+```
+
+### Static Members
+- Shared across all instances.
+-Accessed via the class name, not this.
+
+```ts
+static readonly TYPESCRIPT_TITLE = "TS Bootcamp";
+```
+
+### Inheritance and Superclasses
+Subclasses extend base classes with extends, calling super() to inherit behavior. Use override behavior carefully, especially when constructors call methods that subclasses may override.
+
+### Abstract Classes
+Use abstract classes and methods to define contracts that subclasses must implement. Abstract classes cannot be instantiated directly.
+
+```ts
+abstract class Course {
+  abstract validatePrice(): void;
+}
+```
+
+### Interfaces
+Interfaces define contracts (shapes) that classes must fully implement. They can extend other interfaces.
+
+```ts
+interface HasId {
+  id: number;
+  printId(): void;
+}
+```
+
+A class can implement multiple interfaces:
+
+```ts
+class Course implements HasId {
+  id: number;
+  printId() { console.log(this.id); }
+}
+```
+
+### Singleton Pattern
+Create single-instance classes using a private constructor and a static accessor:
+
+```ts
+class CoursesService {
+  private static INSTANCE: CoursesService;
+  private constructor() {}
+  static instance() {
+    if (!this.INSTANCE) this.INSTANCE = new CoursesService();
+    return this.INSTANCE;
+  }
+}
+```
+
+## 📦 Generics in TypeScript
+Generics allow you to write reusable, type-safe code that works with any type.
+
+### Generic Types
+```ts
+function freeze<T>(input: T): Readonly<T> {
+  return Object.freeze(input);
+}
+```
+
+### Type Constraints with extends
+```ts
+function freeze<T extends object>(input: T): Readonly<T> {
+  return Object.freeze(input);
+}
+```
+
+### Utility Types
+- Partial<T>: All properties optional.
+- Readonly<T>: All properties immutable.
+
+```ts
+function updateCourse(id: string, update: Partial<Course>) { ... }
+```
+
+### keyof Operator
+Extracts a union of property names from a type:
+
+```ts
+type CourseKeys = keyof Course;
+function extractProperty<T, K extends keyof T>(obj: T, key: K) {
+  return obj[key];
+}
+```
+
+### Generic Classes
+```ts
+class KeyValue<K, V> {
+  constructor(public readonly key: K, public readonly value: V) {}
+}
+```
+
+### Merging with Generics
+```ts
+function safeMerge<T, U>(obj1: T, obj2: U): T & U {
+  return Object.assign({}, obj1, obj2);
+}
+```
+
+## 🧪 Decorators in TypeScript
+Decorators provide a meta-programming mechanism to enhance classes, methods, properties, and parameters without inheritance.
+- ⚠️ Requires "experimentalDecorators": true in tsconfig.json.
+
+### Method Decorators
+Used to wrap, modify, or log method behavior:
+
+```ts
+function Log(level: LoggingLevel): MethodDecorator {
+  return (target, propertyKey, descriptor) => {
+    const original = descriptor.value;
+    descriptor.value = function (...args: any[]) {
+      if (level <= appMaxLoggingLevel) {
+        console.log(`>> log: ${propertyKey}, ${JSON.stringify(args)}`);
+      }
+      return original.apply(this, args);
+    };
+  };
+}
+```
+
+Use it like:
+
+```ts
+@Log(LoggingLevel.DEBUG)
+saveData(data: any) { ... }
+```
+
+### Class Decorators
+Used to seal or modify class constructors:
+
+```ts
+function SealClass(): ClassDecorator {
+  return constructor => {
+    Object.seal(constructor);
+    Object.seal(constructor.prototype);
+  };
+}
+```
+
+### Property Decorators
+Used to define custom behavior for class properties, like injecting unique IDs:
+
+```ts
+function DatabaseId(): PropertyDecorator {
+  return (target, key) => {
+    Object.defineProperty(target, key, {
+      get() {
+        if (!this["_id"]) this["_id"] = Date.now().toString(36);
+        return this["_id"];
+      }
+    });
+  };
+}
+```
